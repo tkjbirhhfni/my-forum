@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>משחק חידות</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            direction: rtl;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 600px;
+            max-width: 95%;
+            padding: 20px;
+            position: relative;
+        }
+
+        .registration-form {
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .error-message {
+            color: #F44336;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .start-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .start-btn:hover {
+            background-color: #45a049;
+        }
+
+        .quiz-container {
+            display: none;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .question {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .option {
+            background-color: #f0f0f0;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .option:hover {
+            background-color: #e0e0e0;
+        }
+
+        .selected {
+            background-color: #d0d0d0;
+            border-color: #aaa;
+        }
+
+        .timer {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .timer-box {
+            width: 30px;
+            height: 30px;
+            background-color: #2196F3;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 2px;
+            border-radius: 5px;
+        }
+
+        .timer-red {
+            background-color: #F44336;
+        }
+
+        .next-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        .next-btn:hover {
+            background-color: #45a049;
+        }
+
+        .result {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .result-content {
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .result-icon {
+            font-size: 100px;
+            margin-bottom: 20px;
+        }
+
+        .correct {
+            color: #4CAF50;
+        }
+
+        .incorrect {
+            color: #F44336;
+        }
+
+        .score-display {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .progress {
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: #4CAF50;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .final-screen {
+            display: none;
+            text-align: center;
+        }
+
+        .final-score {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .share-container {
+            margin: 20px 0;
+        }
+
+        .share-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+
+        .share-btn:hover {
+            opacity: 0.9;
+        }
+
+        .copy-btn {
+            background-color: #2196F3;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 140px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 150%;
+            left: 50%;
+            margin-left: -70px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+
+        .tooltip.show .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .score-image {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px auto;
+            width: 80%;
+            text-align: center;
+        }
+
+        .score-image h3 {
+            margin-top: 0;
+        }
+
+        .player-info {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .error-container {
+            background-color: #ffebee;
+            color: #F44336;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- מסך הרשמה -->
+        <div class="registration-form" id="registration-form">
+            <h2>ברוכים הבאים למשחק החידות!</h2>
+            <p>כדי להתחיל, אנא הזינו את הפרטים הבאים:</p>
+            
+            <div class="error-container" id="already-played-error">
+                שים לב! כבר שיחקת במשחק זה עם כתובת המייל הזו.
+                כל משתמש יכול לשחק פעם אחת בלבד.
+            </div>
+            
+            <div class="form-group">
+                <label for="player-name">שם פרטי:</label>
+                <input type="text" id="player-name" required>
+                <div class="error-message" id="name-error">שדה השם הוא שדה חובה</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="player-email">כתובת מייל:</label>
+                <input type="email" id="player-email" required>
+                <div class="error-message" id="email-error">יש להזין כתובת מייל תקינה</div>
+            </div>
+            
+            <button class="start-btn" id="start-btn">התחל משחק</button>
+        </div>
+
+        <!-- מסך משחק -->
+        <div class="quiz-container" id="quiz-container">
+            <div class="header">
+                <div class="score-display">ניקוד: <span id="score">0</span></div>
+                <div class="score-display">שאלה: <span id="question-number">1</span>/30</div>
+            </div>
+            <div class="progress">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <div class="question" id="question"></div>
+            <div class="options" id="options"></div>
+            <div class="timer" id="timer"></div>
+            <button class="next-btn" id="next-btn">השאלה הבאה</button>
+
+            <div class="final-screen" id="final-screen">
+                <h2>סיימת את המשחק!</h2>
+                <div class="final-score">הניקוד הסופי שלך: <span id="final-score">0</span></div>
+                
+                <div class="score-image" id="score-image">
+                    <h3>תוצאות משחק החידות</h3>
+                    <div class="player-info" id="result-player-name">שם: ישראל ישראלי</div>
+                    <div class="final-score">ניקוד: <span id="image-score">0</span> מתוך 30</div>
+                </div>
+                
+                <div class="share-container">
+                    <p>שתפו את התוצאה שלכם:</p>
+                    <button class="share-btn" id="download-score">הורד תמונה</button>
+                    <div class="tooltip">
+                        <button class="share-btn copy-btn" id="copy-score">העתק לשיתוף</button>
+                        <span class="tooltiptext" id="copy-tooltip">הועתק!</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="result" id="result">
+        <div class="result-content">
+            <div class="result-icon" id="result-icon"></div>
+            <button class="next-btn" id="result-next-btn">השאלה הבאה</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "מהי בירת ישראל?",
+                options: ["תל אביב", "ירושלים", "חיפה", "באר שבע"],
+                answer: 1
+            },
+            {
+                question: "כמה שבטים יש בעם ישראל?",
+                options: ["10", "12", "8", "14"],
+                answer: 1
+            },
+            {
+                question: "מיהו האדם הראשון בתנ\"ך?",
+                options: ["נוח", "אברהם", "אדם", "משה"],
+                answer: 2
+            },
+            {
+                question: "מהו ההר הגבוה ביותר בישראל?",
+                options: ["הר חרמון", "הר מירון", "הר תבור", "הר הארבל"],
+                answer: 0
+            },
+            {
+                question: "מי כתב את הספר 'אלטנוילנד'?",
+                options: ["אחד העם", "תיאודור הרצל", "חיים נחמן ביאליק", "אליעזר בן יהודה"],
+                answer: 1
+            },
+            {
+                question: "מהי שנת הקמת מדינת ישראל?",
+                options: ["1947", "1948", "1949", "1950"],
+                answer: 1
+            },
+            {
+                question: "מהו הים הגדול ביותר בישראל?",
+                options: ["ים המלח", "ים כנרת", "הים התיכון", "הים האדום"],
+                answer: 2
+            },
+            {
+                question: "מי היה ראש הממשלה הראשון של ישראל?",
+                options: ["דוד בן-גוריון", "משה שרת", "גולדה מאיר", "מנחם בגין"],
+                answer: 0
+            },
+            {
+                question: "מהו הפרי הלאומי של ישראל?",
+                options: ["תמר", "תפוז", "זית", "רימון"],
+                answer: 3
+            },
+            {
+                question: "מהו המטבע הרשמי של ישראל?",
+                options: ["דולר", "יורו", "שקל", "לירה"],
+                answer: 2
+            },
+            {
+                question: "מיהו מחבר התקווה?",
+                options: ["נפתלי הרץ אימבר", "חיים נחמן ביאליק", "שאול טשרניחובסקי", "נתן אלתרמן"],
+                answer: 0
+            },
+            {
+                question: "מי גילה את תהליך הפסטור?",
+                options: ["אלברט איינשטיין", "לואי פסטר", "אייזק ניוטון", "אלכסנדר פלמינג"],
+                answer: 1
+            },
+            {
+                question: "מהו האיבר הגדול ביותר בגוף האדם?",
+                options: ["הלב", "המוח", "הריאות", "העור"],
+                answer: 3
+            },
+            {
+                question: "מהו סמל כימי של זהב?",
+                options: ["Zn", "Au", "Ag", "Fe"],
+                answer: 1
+            },
+            {
+                question: "מהו הפלנטה הקרובה ביותר לשמש?",
+                options: ["וונוס", "מרקורי", "מאדים", "כדור הארץ"],
+                answer: 1
+            },
+            {
+                question: "מי כתב את 'הנסיך הקטן'?",
+                options: ["ג'ורג' אורוול", "אנטואן דה סנט-אכזופרי", "הרמן הסה", "ג'יין אוסטין"],
+                answer: 1
+            },
+            {
+                question: "מהו החג הראשון בשנה העברית?",
+                options: ["פסח", "ראש השנה", "חנוכה", "שבועות"],
+                answer: 1
+            },
+            {
+                question: "מיהו ממציא הטלפון?",
+                options: ["תומס אדיסון", "אלכסנדר גרהם בל", "ניקולה טסלה", "מייקל פאראדיי"],
+                answer: 1
+            },
+            {
+                question: "מהו הצבע שמתקבל מערבוב כחול וצהוב?",
+                options: ["סגול", "כתום", "ירוק", "חום"],
+                answer: 2
+            },
+            {
+                question: "כמה שחקנים יש בקבוצת כדורסל?",
+                options: ["5", "6", "7", "11"],
+                answer: 0
+            },
+            {
+                question: "מהו היסוד הנפוץ ביותר ביקום?",
+                options: ["חמצן", "פחמן", "מימן", "חנקן"],
+                answer: 2
+            },
+            {
+                question: "מיהו מחבר 'רומיאו ויוליה'?",
+                options: ["צ'ארלס דיקנס", "ויקטור הוגו", "וויליאם שייקספיר", "ג'יין אוסטין"],
+                answer: 2
+            },
+            {
+                question: "מהו הנהר הארוך ביותר בעולם?",
+                options: ["אמזונס", "נילוס", "מיסיסיפי", "יאנגצה"],
+                answer: 1
+            },
+            {
+                question: "מיהו הנשיא הראשון של ארה\"ב?",
+                options: ["תומס ג'פרסון", "ג'ורג' וושינגטון", "אברהם לינקולן", "ג'ון אדמס"],
+                answer: 1
+            },
+            {
+                question: "מהו המקום הנמוך ביותר בעולם?",
+                options: ["ים המלח", "עמק המוות", "מפרץ אילת", "הקוטב הדרומי"],
+                answer: 0
+            },
+            {
+                question: "מיהו הצייר של 'ליל כוכבים'?",
+                options: ["פיקאסו", "רמברנדט", "ואן גוך", "מונה"],
+                answer: 2
+            },
+            {
+                question: "מהו מספר העצמות בגוף האדם המבוגר?",
+                options: ["206", "306", "406", "506"],
+                answer: 0
+            },
+            {
+                question: "מיהו המדען שפיתח את תורת היחסות?",
+                options: ["אייזק ניוטון", "אלברט איינשטיין", "סטיבן הוקינג", "גליליאו גליליי"],
+                answer: 1
+            },
+            {
+                question: "מהו הים הגדול ביותר בעולם?",
+                options: ["האוקיינוס האטלנטי", "האוקיינוס ההודי", "האוקיינוס השקט", "הים התיכון"],
+                answer: 2
+            },
+            {
+                question: "מיהו מחבר 'מלחמה ושלום'?",
+                options: ["פיודור דוסטויבסקי", "לב טולסטוי", "אנטון צ'כוב", "מיכאיל בולגקוב"],
+                answer: 1
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let timer;
+        let timeLeft = 15;
+        let timerElement;
+        let answered = false;
+        let playerName = "";
+        let playerEmail = "";
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // Registration form validation
+            document.getElementById("start-btn").addEventListener("click", validateAndStartGame);
+            
+            // Quiz navigation
+            document.getElementById("next-btn").addEventListener("click", nextQuestion);
+            document.getElementById("result-next-btn").addEventListener("click", function () {
+                document.getElementById("result").style.display = "none";
+                nextQuestion();
+            });
+            
+            // Sharing buttons
+            document.getElementById("download-score").addEventListener("click", downloadScoreImage);
+            document.getElementById("copy-score").addEventListener("click", copyScoreToClipboard);
+            
+            // Check if user has played before
+            checkPreviousPlay();
+        });
+
+        function validateAndStartGame() {
+            const nameInput = document.getElementById("player-name");
+            const emailInput = document.getElementById("player-email");
+            const nameError = document.getElementById("name-error");
+            const emailError = document.getElementById("email-error");
+            
+            let isValid = true;
+            
+            // Validate name
+            if (nameInput.value.trim() === "") {
+                nameError.style.display = "block";
+                isValid = false;
+            } else {
+                nameError.style.display = "none";
+            }
+            
+            // Validate email
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(emailInput.value)) {
+                emailError.style.display = "block";
+                isValid = false;
+            } else {
+                emailError.style.display = "none";
+            }
+            
+            if (isValid) {
+                playerName = nameInput.value.trim();
+                playerEmail = emailInput.value.trim();
+                
+                // Check if this user has played before
+                if (localStorage.getItem("played_" + playerEmail)) {
+                    document.getElementById("already-played-error").style.display = "block";
+                    return;
+                }
+                
+                // Hide registration, show quiz
+                document.getElementById("registration-form").style.display = "none";
+                document.getElementById("quiz-container").style.display = "block";
+                
+                // Start the game
+                loadQuestion();
+            }
+        }
+
+        function checkPreviousPlay() {
+            // Check URL parameters for returning from share
+            const urlParams = new URLSearchParams(window.location.search);
+            const sharedEmail = urlParams.get('email');
+            const sharedScore = urlParams.get('score');
+            
+            if (sharedEmail && sharedScore) {
+                // Show the score without playing again
+                showSharedScore(sharedEmail, sharedScore);
+            }
+        }
+
+        function showSharedScore(email, finalScore) {
+            document.getElementById("registration-form").style.display = "none";
+            document.getElementById("quiz-container").style.display = "block";
+            document.getElementById("question").style.display = "none";
+            document.getElementById("options").style.display = "none";
+            document.getElementById("timer").style.display = "none";
+            document.getElementById("next-btn").style.display = "none";
+            
+            // Get player name from local storage if available
+            const playerData = localStorage.getItem("playerData_" + email);
+            let name = "משתמש";
+            if (playerData) {
+                name = JSON.parse(playerData).name;
+            }
+            
+            // Show final screen with shared score
+            document.getElementById("final-screen").style.display = "block";
+            document.getElementById("final-score").textContent = finalScore;
+            document.getElementById("image-score").textContent = finalScore;
+            document.getElementById("result-player-name").textContent = "שם: " + name;
+        }
+
+        function loadQuestion() {
+            answered = false;
+            const questionElement = document.getElementById("question");
+            const optionsElement = document.getElementById("options");
+            const questionData = questions[currentQuestion];
+            
+            // Update question number and progress bar
+            document.getElementById("question-number").textContent = currentQuestion + 1;
+            document.getElementById("progress-bar").style.width = `${((currentQuestion) / questions.length) * 100}%`;
+            
+            // Set question
+            questionElement.textContent = questionData.question;
+            
+            // Clear options
+            optionsElement.innerHTML = "";
+            
+            // Add options
+            questionData.options.forEach((option, index) => {
+                const optionElement = document.createElement("div");
+                optionElement.classList.add("option");
+                optionElement.textContent = option;
+                optionElement.setAttribute("data-index", index);
+                optionElement.addEventListener("click", selectOption);
+                optionsElement.appendChild(optionElement);
+            });
+            
+            // Reset and start timer
+            resetTimer();
+            startTimer();
+            
+            // Hide next button in quiz container (we'll use the one in result only)
+            document.getElementById("next-btn").style.display = "none";
+        }
+        
+        function selectOption(e) {
+            if (answered) return;
+            
+            answered = true;
+            clearInterval(timer);
+            
+            const selectedIndex = parseInt(e.target.getAttribute("data-index"));
+            const correctIndex = questions[currentQuestion].answer;
+            
+            // Highlight selected option
+            document.querySelectorAll(".option").forEach(option => {
+                option.classList.remove("selected");
+            });
+            e.target.classList.add("selected");
+            
+            // Show result
+            const resultElement = document.getElementById("result");
+            const resultIconElement = document.getElementById("result-icon");
+            
+            if (selectedIndex === correctIndex) {
+                score++;
+                document.getElementById("score").textContent = score;
+                resultIconElement.textContent = "✓";
+                resultIconElement.className = "result-icon correct";
+            } else {
+                resultIconElement.textContent = "✗";
+                resultIconElement.className = "result-icon incorrect";
+            }
+            
+            resultElement.style.display = "flex";
+        }
+        
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showFinalScreen();
+            }
+        }
+        
+        function showFinalScreen() {
+            // Save player data and mark as played
+            savePlayerData();
+            
+            // Update score display
+            document.getElementById("final-score").textContent = score;
+            document.getElementById("image-score").textContent = score;
+            document.getElementById("result-player-name").textContent = "שם: " + playerName;
+            
+            // Show final screen, hide game elements
+            document.getElementById("final-screen").style.display = "block";
+            document.getElementById("question").style.display = "none";
+            document.getElementById("options").style.display = "none";
+            document.getElementById("timer").style.display = "none";
+            document.getElementById("next-btn").style.display = "none";
+        }
+        
+        function savePlayerData() {
+            // Mark this email as having played
+            localStorage.setItem("played_" + playerEmail, "true");
+            
+            // Save player data for future reference
+            const playerData = {
+                name: playerName,
+                score: score,
+                date: new Date().toISOString()
+            };
+            
+            localStorage.setItem("playerData_" + playerEmail, JSON.stringify(playerData));
+        }
+        
+        function startTimer() {
+            timeLeft = 15;
+            updateTimer();
+            timer = setInterval(function() {
+                timeLeft--;
+                updateTimer();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    if (!answered) {
+                        answered = true;
+                        const resultElement = document.getElementById("result");
+                        const resultIconElement = document.getElementById("result-icon");
+                        resultIconElement.textContent = "✗";
+                        resultIconElement.className = "result-icon incorrect";
+                        resultElement.style.display = "flex";
+                    }
+                }
+            }, 1000);
+        }
+        
+        function updateTimer() {
+            const timerElement = document.getElementById("timer");
+            timerElement.innerHTML = "";
+            
+            const timerDigits = timeLeft.toString().padStart(2, '0');
+            
+            for (let i = 0; i < timerDigits.length; i++) {
+                const timerBox = document.createElement("div");
+                timerBox.classList.add("timer-box");
+                if (timeLeft <= 5) {
+                    timerBox.classList.add("timer-red");
+                }
+                timerBox.textContent = timerDigits[i];
+                timerElement.appendChild(timerBox);
+            }
+        }
+        
+        function resetTimer() {
+            clearInterval(timer);
+            timeLeft = 15;
+            updateTimer();
+        }
+        
+        // Image generation and sharing functions
+        function downloadScoreImage() {
+            // Here we would normally use html2canvas or similar library
+            // For this demo, we'll just alert that the image would be downloaded
+            alert("במצב רגיל, התמונה תורד למכשיר שלך.");
+            
+            // In real implementation:
+            // html2canvas(document.getElementById("score-image")).then(canvas => {
+            //     const link = document.createElement('a');
+            //     link.download = 'quiz-score.png';
+            //     link.href = canvas.toDataURL();
+            //     link.click();
+            // });
+        }
+        
+        function copyScoreToClipboard() {
+            // Create a text representation of the score
+            const scoreText = `שם: ${playerName}\nניקוד: ${score} מתוך 30`;
+            
+            // In a real implementation, we would use the Clipboard API:
+            // navigator.clipboard.writeText(scoreText).then(() => {
+            //     showTooltip();
+            // });
+            
+            // For this demo, we'll just show the tooltip
+            showTooltip();
+            
+            // Fallback for browsers that don't support the Clipboard API
+            const textArea = document.createElement("textarea");
+            textArea.value = scoreText;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textArea);
+        }
+        
+        function showTooltip() {
+            const tooltip = document.getElementById("copy-tooltip");
+            const tooltipContainer = tooltip.parentElement;
+            tooltipContainer.classList.add("show");
+            
+            setTimeout(() => {
+                tooltipContainer.classList.remove("show");
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
