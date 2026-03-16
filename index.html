@@ -419,6 +419,78 @@ const OFFENSIVE=['סדרות','סרטים','סרטונים מעניינים'];
 const STATUS_BAD=['סדרות','סרטים'];
 const MAX_STATUS=60;
 const TWO_MIN=120000;
+
+// ═══ SERVER CONFIG ═══
+// ⬇️  שנה לכתובת ה-PythonAnywhere שלך
+const API = 'https://binaplus1.pythonanywhere.com/api';
+let serverSyncPending = false;
+let lastServerSync = 0;
+let pollingInterval = null;
+
+async function apiGet(endpoint) {
+ try {
+  const r = await fetch(API + endpoint);
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return await r.json();
+ } catch(e) { console.warn('API GET error:', e); return null; }
+}
+
+async function apiPost(endpoint, data) {
+ try {
+  const r = await fetch(API + endpoint, {
+   method: 'POST',
+   headers: {'Content-Type': 'application/json'},
+   body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return await r.json();
+ } catch(e) { console.warn('API POST error:', e); return null; }
+}
+
+// Load all data from server into localStorage
+async function syncFromServer() {
+ const data = await apiGet('/data');
+ if (!data) return false;
+ const keys = ['users','threads','messages','notifications','nameRequests'];
+ keys.forEach(k => { if (data[k] !== undefined) localStorage.setItem(k, JSON.stringify(data[k])); });
+ return true;
+}
+
+// Push all localStorage data to server
+async function syncToServer() {
+ if (serverSyncPending) return;
+ serverSyncPending = true;
+ const data = {
+  users: JSON.parse(localStorage.getItem('users')||'[]'),
+  threads: JSON.parse(localStorage.getItem('threads')||'[]'),
+  messages: JSON.parse(localStorage.getItem('messages')||'[]'),
+  notifications: JSON.parse(localStorage.getItem('notifications')||'{}'),
+  nameRequests: JSON.parse(localStorage.getItem('nameRequests')||'[]'),
+ };
+ await apiPost('/data', data);
+ serverSyncPending = false;
+ lastServerSync = Date.now();
+}
+
+// Start polling every 3 seconds for new messages
+function startPolling() {
+ if (pollingInterval) clearInterval(pollingInterval);
+ pollingInterval = setInterval(async () => {
+  if (!CU) return;
+  const prev = CT ? JSON.parse(localStorage.getItem('messages')||'[]').filter(m=>m.threadId===CT.id).length : -1;
+  const ok = await syncFromServer();
+  if (!ok) return;
+  // Update notifications badge
+  renderNotifs();
+  // Update threads list
+  loadThreads();
+  // If current thread has new messages, refresh
+  if (CT) {
+   const now = JSON.parse(localStorage.getItem('messages')||'[]').filter(m=>m.threadId===CT.id).length;
+   if (now !== prev) loadMsgs(CT.id);
+  }
+ }, 3000);
+}
 const PERM_DEFS=[
  {k:'isAdmin',l:'🛡️ מנהל מלא',d:'גישה לפאנל ניהול מלא'},
  {k:'canHtml',l:'🌐 שליחת HTML',d:'הודעות HTML מעוצבות'},
@@ -434,7 +506,12 @@ const PERM_DEFS=[
 const $=id=>document.getElementById(id);
 const ls=k=>JSON.parse(localStorage.getItem(k)||'[]');
 const lso=k=>JSON.parse(localStorage.getItem(k)||'{}');
-const ss=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const ss=(k,v)=>{
+ localStorage.setItem(k,JSON.stringify(v));
+ // Debounced server sync - wait 400ms after last write
+ clearTimeout(ss._t);
+ ss._t=setTimeout(syncToServer,400);
+};
 const isSuper=u=>{u=u||CU;return u&&u.email&&u.email.toLowerCase()===SUPER_EMAIL.toLowerCase();};
 const isAdmin=u=>{u=u||CU;return u&&(u.isAdmin||isSuper(u));};
 const can=p=>{
@@ -452,32 +529,58 @@ const getUser=id=>ls('users').find(u=>u.id===id);
 const getSuperUid=()=>(ls('users').find(u=>u.email&&u.email.toLowerCase()===SUPER_EMAIL.toLowerCase())||{}).id||'1';
 
 // ═══ INIT ═══
-document.addEventListener('DOMContentLoaded',()=>{
- initData(); setupListeners();
+document.addEventListener('DOMContentLoaded', async ()=>{
+ await initData();
+ setupListeners();
  const saved=localStorage.getItem('currentUser');
  const rem=localStorage.getItem('rem');
  const sess=sessionStorage.getItem('sa');
- if(saved&&(rem==='1'||sess)){CU=JSON.parse(saved);showApp();}
+ if(saved&&(rem==='1'||sess)){
+  CU=JSON.parse(saved);
+  // Re-validate user still exists on server
+  const users=JSON.parse(localStorage.getItem('users')||'[]');
+  const freshUser=users.find(u=>u.id===CU.id&&!u.deleted);
+  if(freshUser){CU=freshUser;localStorage.setItem('currentUser',JSON.stringify(CU));showApp();startPolling();}
+  else{localStorage.removeItem('currentUser');}
+ }
 });
 
-function initData(){
- if(!localStorage.getItem('users')){
-  ss('users',[{id:'1',name:'מנהל ראשי',email:SUPER_EMAIL,password:SUPER_PW,
-   isAdmin:true,avatar:'מ',profileImage:null,status:'',deleted:false,
-   createdAt:new Date().toISOString(),perms:{}}]);
+async function initData(){
+ // Show loading indicator
+ const auth = document.getElementById('authScreen');
+ const loader = document.createElement('div');
+ loader.id = 'srv-loader';
+ loader.style.cssText = 'position:fixed;inset:0;background:linear-gradient(135deg,#1e3a8a,#0ea5e9);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;color:white;font-family:Heebo,sans-serif;';
+ loader.innerHTML = '<div style="font-size:36px;margin-bottom:16px;">💬</div><div style="font-size:18px;font-weight:700;margin-bottom:8px;">מרחב הדיונים</div><div style="font-size:14px;opacity:.8;">מתחבר לשרת...</div><div style="margin-top:20px;width:40px;height:40px;border:3px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;"></div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
+ document.body.appendChild(loader);
+
+ // Try to load from server
+ const loaded = await syncFromServer();
+
+ // If server unreachable, seed default data locally
+ if (!loaded) {
+  console.warn('Server unavailable, using local data');
+  if(!localStorage.getItem('users')){
+   localStorage.setItem('users', JSON.stringify([{id:'1',name:'מנהל ראשי',email:SUPER_EMAIL,password:SUPER_PW,
+    isAdmin:true,avatar:'מ',profileImage:null,status:'',deleted:false,
+    createdAt:new Date().toISOString(),perms:{}}]));
+  }
+  if(!localStorage.getItem('threads')){
+   localStorage.setItem('threads', JSON.stringify([{id:'1',title:'ברוכים הבאים',description:'נושא היכרות',
+    createdBy:'1',createdAt:new Date().toISOString(),messageCount:1,
+    lastActivity:new Date().toISOString(),pinned:false,locked:false,
+    lastMessageId:'1',lastRead:{}}]));
+  }
+  if(!localStorage.getItem('messages')){
+   localStorage.setItem('messages', JSON.stringify([{id:'1',threadId:'1',userId:'1',userName:'מנהל ראשי',
+    userAvatar:'מ',content:'ברוכים הבאים! 🎉',isHtml:false,
+    timestamp:new Date().toISOString(),edited:false,reactions:{},views:['1'],poll:null,quotedMessage:null}]));
+  }
+  if(!localStorage.getItem('notifications')) localStorage.setItem('notifications','{}');
  }
- if(!localStorage.getItem('threads')){
-  ss('threads',[{id:'1',title:'ברוכים הבאים',description:'נושא היכרות',
-   createdBy:'1',createdAt:new Date().toISOString(),messageCount:1,
-   lastActivity:new Date().toISOString(),pinned:false,locked:false,
-   lastMessageId:'1',lastRead:{}}]);
- }
- if(!localStorage.getItem('messages')){
-  ss('messages',[{id:'1',threadId:'1',userId:'1',userName:'מנהל ראשי',
-   userAvatar:'מ',content:'ברוכים הבאים! 🎉',isHtml:false,
-   timestamp:new Date().toISOString(),edited:false,reactions:{},views:['1'],poll:null,quotedMessage:null}]);
- }
- if(!localStorage.getItem('notifications')) ss('notifications',{});
+
+ // Remove loader
+ loader.remove();
 }
 
 function setupListeners(){
@@ -510,7 +613,7 @@ function doLogin(){
  if(!u){$('lErr').textContent='מייל או סיסמה שגויים';$('lErr').classList.remove('hidden');return;}
  CU=u; localStorage.setItem('currentUser',JSON.stringify(u));
  if($('remMe').checked)localStorage.setItem('rem','1'); else localStorage.removeItem('rem');
- sessionStorage.setItem('sa','1'); showApp();
+ sessionStorage.setItem('sa','1'); showApp(); startPolling();
 }
 function doReg(){
  const name=$('rName').value.trim(),email=$('rEmail').value.trim(),pw=$('rPw').value,pw2=$('rPw2').value;
@@ -527,6 +630,7 @@ function doReg(){
  setTimeout(()=>goSec('login'),1600);
 }
 function doLogout(){
+ if(pollingInterval){clearInterval(pollingInterval);pollingInterval=null;}
  localStorage.removeItem('currentUser');localStorage.removeItem('rem');sessionStorage.removeItem('sa');
  CU=null;CT=null; $('authScreen').style.display='flex'; $('appCon').style.display='none';
 }
