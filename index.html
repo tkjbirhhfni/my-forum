@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>מרחב הדיונים</title>
+<title>צ'ופצ'יק</title>
+<link rel="icon" href="./img/logo.jpg" type="image/jpeg">
+
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--p:#2563eb;--pl:#eff6ff;--pd:#1d4ed8;--ac:#06b6d4;--sf:#f8fafc;--sf2:#f1f5f9;--bd:#e2e8f0;--tx:#0f172a;--t2:#64748b;--t3:#94a3b8;--dn:#ef4444;--ok:#22c55e;--wn:#f59e0b;--sh:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06);--shl:0 8px 32px rgba(0,0,0,.13);}
@@ -65,11 +67,18 @@ body{font-family:'Heebo',sans-serif;background:var(--sf);color:var(--tx);overflo
 .empty .ei{font-size:48px;margin-bottom:16px;opacity:.4;}
 .empty h3{font-size:18px;font-weight:700;color:var(--tx);margin-bottom:8px;}
 /* MESSAGE ROW */
-.mrow{display:flex;gap:0;padding:2px 0;position:relative;}
+.mrow{display:flex;gap:0;padding:3px 0;position:relative;}
+.mrow.own{flex-direction:row-reverse;}
+.mrow.own .mbody{display:flex;flex-direction:column;align-items:flex-end;}
+.mrow.own .mhdr{flex-direction:row-reverse;justify-content:flex-end;}
+.mrow.own .reacts{justify-content:flex-end;align-self:flex-end;}
+
+.mrow.own .bubble{border-radius:16px 4px 16px 16px !important;background:var(--pl)!important;border-color:#bfdbfe!important;}
+.mrow.other .mbody{display:flex;flex-direction:column;align-items:flex-start;}
 .mrow:hover .mfloat{opacity:1;pointer-events:auto;}
 /* Floating actions - absolutely positioned, NO layout shift */
-.mfloat{position:absolute;top:-18px;left:4px;opacity:0;pointer-events:none;transition:opacity .15s;z-index:30;background:#fff;border:1px solid var(--bd);border-radius:20px;padding:3px 8px;box-shadow:var(--shl);display:flex;gap:2px;align-items:center;}
-.mrow.own .mfloat{left:auto;right:4px;}
+.mfloat{position:absolute;top:-20px;right:4px;opacity:0;pointer-events:none;transition:opacity .15s;z-index:30;background:#fff;border:1px solid var(--bd);border-radius:20px;padding:3px 8px;box-shadow:var(--shl);display:flex;gap:2px;align-items:center;}
+.mrow.own .mfloat{right:auto;left:4px;}
 .fab{background:none;border:none;cursor:pointer;font-size:14px;padding:3px 5px;border-radius:6px;transition:background .12s;color:var(--t2);line-height:1;}
 .fab:hover{background:var(--sf2);}
 /* Avatar column */
@@ -78,14 +87,15 @@ body{font-family:'Heebo',sans-serif;background:var(--sf);color:var(--tx);overflo
 .av:hover{transform:scale(1.08);}
 .av img{width:100%;height:100%;object-fit:cover;}
 /* Bubble side */
-.mbody{flex:1;min-width:0;}
+.mbody{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;}
+.mrow.own .bubble{background:var(--pl);border-color:#bfdbfe;border-radius:16px 4px 16px 16px;align-self:flex-end;}
 .mhdr{display:flex;align-items:center;gap:8px;margin-bottom:3px;flex-wrap:wrap;}
 .mnm{font-size:13px;font-weight:700;color:var(--p);}
 .mtime{font-size:11px;color:var(--t3);}
 .mviews{font-size:11px;color:var(--t3);}
 .medit{font-size:10px;color:var(--t3);font-style:italic;}
-.bubble{background:#fff;border:1px solid var(--bd);border-radius:4px 16px 16px 16px;padding:9px 13px;font-size:14px;line-height:1.55;word-break:break-word;max-width:560px;display:inline-block;}
-.mrow.own .bubble{background:var(--pl);border-color:#bfdbfe;border-radius:16px 4px 16px 16px;}
+.bubble{background:#fff;border:1px solid var(--bd);border-radius:4px 16px 16px 16px;padding:9px 13px;font-size:14px;line-height:1.55;word-break:break-word;max-width:560px;align-self:flex-start;}
+
 .bubble.del{background:#fef2f2;border-color:#fecaca;color:var(--dn);font-style:italic;font-size:13px;}
 .mimg{max-width:260px;max-height:180px;border-radius:10px;margin:5px 0;cursor:zoom-in;display:block;border:1px solid var(--bd);}
 .mimg:hover{opacity:.9;}
@@ -93,7 +103,7 @@ body{font-family:'Heebo',sans-serif;background:var(--sf);color:var(--tx);overflo
 .qblk{background:var(--sf2);border-right:3px solid var(--p);padding:6px 10px;border-radius:6px;margin-bottom:7px;font-size:12px;color:var(--t2);}
 .qblk .qa{font-weight:700;color:var(--p);margin-bottom:2px;}
 /* Reactions */
-.reacts{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px;}
+.reacts{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px;}
 .rchip{display:flex;align-items:center;gap:3px;background:var(--sf2);border:1px solid var(--bd);border-radius:20px;padding:2px 7px;font-size:12px;cursor:pointer;transition:all .15s;}
 .rchip:hover,.rchip.mine{background:var(--pl);border-color:var(--p);}
 /* Mention */
@@ -163,18 +173,7 @@ body{font-family:'Heebo',sans-serif;background:var(--sf);color:var(--tx);overflo
 .mdi:hover{background:var(--pl);}
 .miav{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--ac));display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;overflow:hidden;flex-shrink:0;}
 .miav img{width:100%;height:100%;object-fit:cover;}
-/* Poll */
-.pcard{background:var(--sf2);border:1.5px solid var(--bd);border-radius:12px;padding:14px;margin-top:7px;min-width:240px;max-width:340px;}
-.pq{font-weight:700;font-size:14px;margin-bottom:10px;}
-.pob{display:flex;align-items:center;gap:9px;padding:9px 12px;margin-bottom:5px;border:2px solid var(--bd);border-radius:10px;cursor:pointer;background:#fff;font-size:13px;font-family:inherit;width:100%;text-align:right;transition:all .15s;}
-.pob:hover,.pob.sel{border-color:var(--p);background:var(--pl);}
-.pi{width:18px;height:18px;border-radius:50%;border:2px solid var(--bd);flex-shrink:0;transition:all .15s;}
-.pob.sel .pi{border-color:var(--p);background:var(--p);}
-.pvbtn{width:100%;padding:8px;margin-top:8px;background:var(--p);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;}
-.pvbtn:hover{background:var(--pd);}
-.prl{display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;}
-.prbg{background:var(--sf);border-radius:6px;height:7px;overflow:hidden;margin-bottom:7px;}
-.prfill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--p),var(--ac));transition:width .4s;}
+/* Poll removed */
 /* Profile tooltip */
 .ptip{position:fixed;background:#fff;border:1px solid var(--bd);border-radius:14px;padding:14px 16px;box-shadow:var(--shl);z-index:3000;display:none;width:230px;}
 .ptip-row{display:flex;gap:12px;align-items:center;}
@@ -190,6 +189,7 @@ body{font-family:'Heebo',sans-serif;background:var(--sf);color:var(--tx);overflo
 .rb-user{background:var(--sf2);color:var(--t2);border:1px solid var(--bd);}
 .ptip-status{font-size:12px;color:var(--t2);font-style:italic;margin-top:7px;line-height:1.4;}
 .ptip-joined{font-size:11px;color:var(--t3);margin-top:5px;}
+
 /* Notification bell */
 #nbell{position:fixed;top:14px;left:18px;z-index:500;display:none;cursor:pointer;}
 .nbw{width:36px;height:36px;background:#fff;border:1.5px solid var(--bd);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:var(--sh);transition:border-color .15s;position:relative;}
@@ -211,6 +211,10 @@ body{font-family:'Heebo',sans-serif;background:var(--sf);color:var(--tx);overflo
 /* Lightbox */
 .lb{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9999;align-items:center;justify-content:center;cursor:zoom-out;}
 .lb.open{display:flex;}.lb img{max-width:90vw;max-height:90vh;border-radius:10px;}
+
+/* CONTACT ADMIN */
+#contactAdminBtn{margin:8px;padding:10px;background:var(--sf2);color:var(--t2);border:1.5px solid var(--bd);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:none;align-items:center;justify-content:center;gap:6px;transition:all .2s;}
+#contactAdminBtn:hover{border-color:var(--p);color:var(--p);background:var(--pl);}
 /* Scroll btn */
 #scrollBtn{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:var(--p);color:#fff;border:none;padding:7px 18px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;box-shadow:var(--shl);z-index:500;display:none;font-family:inherit;}
 /* Admin btn */
@@ -226,7 +230,7 @@ body{font-family:'Heebo',sans-serif;background:var(--sf);color:var(--tx);overflo
 <!-- AUTH -->
 <div id="authScreen" class="aw">
  <div class="ac">
-  <div class="alo"><div class="ali">💬</div><h1>מרחב הדיונים</h1><p>פלטפורמת שיחה מתקדמת</p></div>
+  <div class="alo"><div class="ali"><img src="./img/logo.jpg" alt="לוגו" style="width:40px;height:40px;object-fit:contain;border-radius:10px;"></div><h1>צ'ופצ'יק</h1><p>פלטפורמת שיחה מתקדמת</p></div>
   <div id="sec-login">
    <div class="fg"><label>מייל</label><input type="email" id="lEmail" placeholder="you@example.com"></div>
    <div class="fg"><label>סיסמה</label><input type="password" id="lPw" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
@@ -250,7 +254,7 @@ body{font-family:'Heebo',sans-serif;background:var(--sf);color:var(--tx);overflo
 <div id="appCon" class="app">
  <div class="sb" id="sidebar">
   <div class="sbh">
-   <div class="sblogo"><div class="sbld">מ</div><span>מרחב הדיונים</span></div>
+   <div class="sblogo"><div class="sbld" style="padding:0;overflow:hidden;background:none;"><img src="./img/logo.jpg" alt="לוגו" style="width:32px;height:32px;object-fit:cover;border-radius:10px;display:block;"></div><span>צ'ופצ'יק</span></div>
    <div style="display:flex;align-items:center;gap:6px;">
     <div class="upill" onclick="showProfile()">
      <div class="uav" id="uav"><div class="sdot"></div></div>
@@ -262,6 +266,7 @@ body{font-family:'Heebo',sans-serif;background:var(--sf);color:var(--tx);overflo
   <div class="sbsrch"><input id="srch" placeholder="חיפוש נושאים..." oninput="renderThreads(this.value)"></div>
   <div id="tlist" class="tlist"></div>
   <button id="ntbtn" class="ntbtn hidden" onclick="showNewThread()">＋ נושא חדש</button>
+ <button id="contactAdminBtn" onclick="showContactAdmin()">✉️ שלח הודעה למנהל</button>
  </div>
  <div class="main">
   <div id="chdr" class="chdr hidden">
@@ -318,20 +323,7 @@ body{font-family:'Heebo',sans-serif;background:var(--sf);color:var(--tx);overflo
   <button class="mbtn p" onclick="submitNR()">שלח בקשה</button>
  </div>
 </div>
-<div class="ovl" id="pollModal">
- <div class="mbox">
-  <button class="mcl" onclick="closeM('pollModal')">×</button>
-  <h3>📊 יצירת סקר</h3>
-  <div class="fg"><label>שאלה</label><input type="text" id="pollQ"></div>
-  <div id="pollOW">
-   <div class="fg"><label>אפשרות 1</label><input type="text" class="popt"></div>
-   <div class="fg"><label>אפשרות 2</label><input type="text" class="popt"></div>
-  </div>
-  <button class="mbtn g" onclick="addPO()" style="width:100%;margin-bottom:12px;">+ הוסף אפשרות</button>
-  <div class="fg"><label>מקסימום בחירות</label><select id="pollMax"><option value="1">1 — בחירה בודדת</option><option value="2">2</option><option value="3">3</option></select></div>
-  <button class="mbtn p" onclick="confirmPoll()">צור סקר</button>
- </div>
-</div>
+
 <div class="ovl" id="adminModal">
  <div class="mbox vwide">
   <button class="mcl" onclick="closeM('adminModal')">×</button>
@@ -384,6 +376,30 @@ body{font-family:'Heebo',sans-serif;background:var(--sf);color:var(--tx);overflo
   </div>
  </div>
 </div>
+
+<!-- Thread Access Modal -->
+<div class="ovl" id="accessModal">
+ <div class="mbox">
+  <button class="mcl" onclick="closeM('accessModal')">×</button>
+  <h3 id="accessModalTitle">ניהול גישה לנושא</h3>
+  <p style="font-size:13px;color:var(--t2);margin-bottom:14px;">כשנושא מוסתר, רק משתמשים שנבחרו כאן יוכלו לראות אותו.</p>
+  <div class="fg"><label>הוסף גישה למשתמש</label>
+   <select id="accessUserSel" style="margin-bottom:8px;"></select>
+   <button class="mbtn p" onclick="grantAccess()" style="width:100%;">הוסף</button>
+  </div>
+  <div class="asec"><h4>משתמשים עם גישה</h4><div id="accessList"></div></div>
+ </div>
+</div>
+
+<!-- Contact Admin Modal -->
+<div class="ovl" id="contactAdminModal">
+ <div class="mbox">
+  <button class="mcl" onclick="closeM('contactAdminModal')">×</button>
+  <h3>✉️ שלח הודעה למנהל</h3>
+  <div class="fg"><label>הודעה</label><textarea id="contactAdminTxt" rows="4" placeholder="כתוב הודעתך..."></textarea></div>
+  <button class="mbtn p" onclick="sendContactAdmin()">שלח</button>
+ </div>
+</div>
 <!-- Lightbox -->
 <div class="lb" id="lb" onclick="closeLB()"><img id="lbImg" src="" alt=""></div>
 <!-- Profile tooltip -->
@@ -419,78 +435,6 @@ const OFFENSIVE=['סדרות','סרטים','סרטונים מעניינים'];
 const STATUS_BAD=['סדרות','סרטים'];
 const MAX_STATUS=60;
 const TWO_MIN=120000;
-
-// ═══ SERVER CONFIG ═══
-// ⬇️  שנה לכתובת ה-PythonAnywhere שלך
-const API = 'https://binaplus1.pythonanywhere.com/api';
-let serverSyncPending = false;
-let lastServerSync = 0;
-let pollingInterval = null;
-
-async function apiGet(endpoint) {
- try {
-  const r = await fetch(API + endpoint);
-  if (!r.ok) throw new Error('HTTP ' + r.status);
-  return await r.json();
- } catch(e) { console.warn('API GET error:', e); return null; }
-}
-
-async function apiPost(endpoint, data) {
- try {
-  const r = await fetch(API + endpoint, {
-   method: 'POST',
-   headers: {'Content-Type': 'application/json'},
-   body: JSON.stringify(data)
-  });
-  if (!r.ok) throw new Error('HTTP ' + r.status);
-  return await r.json();
- } catch(e) { console.warn('API POST error:', e); return null; }
-}
-
-// Load all data from server into localStorage
-async function syncFromServer() {
- const data = await apiGet('/data');
- if (!data) return false;
- const keys = ['users','threads','messages','notifications','nameRequests'];
- keys.forEach(k => { if (data[k] !== undefined) localStorage.setItem(k, JSON.stringify(data[k])); });
- return true;
-}
-
-// Push all localStorage data to server
-async function syncToServer() {
- if (serverSyncPending) return;
- serverSyncPending = true;
- const data = {
-  users: JSON.parse(localStorage.getItem('users')||'[]'),
-  threads: JSON.parse(localStorage.getItem('threads')||'[]'),
-  messages: JSON.parse(localStorage.getItem('messages')||'[]'),
-  notifications: JSON.parse(localStorage.getItem('notifications')||'{}'),
-  nameRequests: JSON.parse(localStorage.getItem('nameRequests')||'[]'),
- };
- await apiPost('/data', data);
- serverSyncPending = false;
- lastServerSync = Date.now();
-}
-
-// Start polling every 3 seconds for new messages
-function startPolling() {
- if (pollingInterval) clearInterval(pollingInterval);
- pollingInterval = setInterval(async () => {
-  if (!CU) return;
-  const prev = CT ? JSON.parse(localStorage.getItem('messages')||'[]').filter(m=>m.threadId===CT.id).length : -1;
-  const ok = await syncFromServer();
-  if (!ok) return;
-  // Update notifications badge
-  renderNotifs();
-  // Update threads list
-  loadThreads();
-  // If current thread has new messages, refresh
-  if (CT) {
-   const now = JSON.parse(localStorage.getItem('messages')||'[]').filter(m=>m.threadId===CT.id).length;
-   if (now !== prev) loadMsgs(CT.id);
-  }
- }, 3000);
-}
 const PERM_DEFS=[
  {k:'isAdmin',l:'🛡️ מנהל מלא',d:'גישה לפאנל ניהול מלא'},
  {k:'canHtml',l:'🌐 שליחת HTML',d:'הודעות HTML מעוצבות'},
@@ -502,13 +446,72 @@ const PERM_DEFS=[
  {k:'canCreateThread',l:'➕ יצירת נושאים',d:'פתיחת נושאים חדשים'},
 ];
 
+
+// ═══ SERVER CONFIG ═══
+const API = 'https://binaplus1.pythonanywhere.com/api';
+let serverSyncPending = false;
+let pollingInterval = null;
+
+async function apiGet(endpoint) {
+ try {
+  const r = await fetch(API + endpoint);
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return await r.json();
+ } catch(e) { console.warn('API error:', e); return null; }
+}
+async function apiPost(endpoint, data) {
+ try {
+  const r = await fetch(API + endpoint, {
+   method: 'POST',
+   headers: {'Content-Type': 'application/json'},
+   body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return await r.json();
+ } catch(e) { console.warn('API error:', e); return null; }
+}
+async function syncFromServer() {
+ const data = await apiGet('/data');
+ if (!data) return false;
+ ['users','threads','messages','notifications','nameRequests'].forEach(k => {
+  if (data[k] !== undefined) localStorage.setItem(k, JSON.stringify(data[k]));
+ });
+ return true;
+}
+async function syncToServer() {
+ if (serverSyncPending) return;
+ serverSyncPending = true;
+ await apiPost('/data', {
+  users: JSON.parse(localStorage.getItem('users')||'[]'),
+  threads: JSON.parse(localStorage.getItem('threads')||'[]'),
+  messages: JSON.parse(localStorage.getItem('messages')||'[]'),
+  notifications: JSON.parse(localStorage.getItem('notifications')||'{}'),
+  nameRequests: JSON.parse(localStorage.getItem('nameRequests')||'[]'),
+ });
+ serverSyncPending = false;
+}
+function startPolling() {
+ if (pollingInterval) clearInterval(pollingInterval);
+ pollingInterval = setInterval(async () => {
+  if (!CU) return;
+  const prevLen = CT ? JSON.parse(localStorage.getItem('messages')||'[]').filter(m=>m.threadId===CT.id).length : -1;
+  const ok = await syncFromServer();
+  if (!ok) return;
+  renderNotifs();
+  loadThreads();
+  if (CT) {
+   const newLen = JSON.parse(localStorage.getItem('messages')||'[]').filter(m=>m.threadId===CT.id).length;
+   if (newLen !== prevLen) loadMsgs(CT.id);
+  }
+ }, 3000);
+}
+
 // ═══ HELPERS ═══
 const $=id=>document.getElementById(id);
 const ls=k=>JSON.parse(localStorage.getItem(k)||'[]');
 const lso=k=>JSON.parse(localStorage.getItem(k)||'{}');
 const ss=(k,v)=>{
  localStorage.setItem(k,JSON.stringify(v));
- // Debounced server sync - wait 400ms after last write
  clearTimeout(ss._t);
  ss._t=setTimeout(syncToServer,400);
 };
@@ -537,50 +540,39 @@ document.addEventListener('DOMContentLoaded', async ()=>{
  const sess=sessionStorage.getItem('sa');
  if(saved&&(rem==='1'||sess)){
   CU=JSON.parse(saved);
-  // Re-validate user still exists on server
   const users=JSON.parse(localStorage.getItem('users')||'[]');
-  const freshUser=users.find(u=>u.id===CU.id&&!u.deleted);
-  if(freshUser){CU=freshUser;localStorage.setItem('currentUser',JSON.stringify(CU));showApp();startPolling();}
-  else{localStorage.removeItem('currentUser');}
+  const fresh=users.find(u=>u.id===CU.id&&!u.deleted);
+  if(fresh){CU=fresh;localStorage.setItem('currentUser',JSON.stringify(CU));showApp();startPolling();}
+  else localStorage.removeItem('currentUser');
  }
 });
 
 async function initData(){
- // Show loading indicator
- const auth = document.getElementById('authScreen');
- const loader = document.createElement('div');
- loader.id = 'srv-loader';
- loader.style.cssText = 'position:fixed;inset:0;background:linear-gradient(135deg,#1e3a8a,#0ea5e9);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;color:white;font-family:Heebo,sans-serif;';
- loader.innerHTML = '<div style="font-size:36px;margin-bottom:16px;">💬</div><div style="font-size:18px;font-weight:700;margin-bottom:8px;">מרחב הדיונים</div><div style="font-size:14px;opacity:.8;">מתחבר לשרת...</div><div style="margin-top:20px;width:40px;height:40px;border:3px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;"></div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
+ // Loading spinner
+ const loader=document.createElement('div');
+ loader.style.cssText='position:fixed;inset:0;background:linear-gradient(135deg,#1e3a8a,#0ea5e9);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;color:white;font-family:Heebo,sans-serif;';
+ loader.innerHTML='<div style="font-size:36px;margin-bottom:16px;">💬</div><div style="font-size:18px;font-weight:700;margin-bottom:8px;">מרחב הדיונים</div><div style="font-size:14px;opacity:.8;">מתחבר לשרת...</div><div style="margin-top:20px;width:40px;height:40px;border:3px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;"></div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
  document.body.appendChild(loader);
-
- // Try to load from server
  const loaded = await syncFromServer();
-
- // If server unreachable, seed default data locally
- if (!loaded) {
-  console.warn('Server unavailable, using local data');
-  if(!localStorage.getItem('users')){
-   localStorage.setItem('users', JSON.stringify([{id:'1',name:'מנהל ראשי',email:SUPER_EMAIL,password:SUPER_PW,
-    isAdmin:true,avatar:'מ',profileImage:null,status:'',deleted:false,
-    createdAt:new Date().toISOString(),perms:{}}]));
-  }
-  if(!localStorage.getItem('threads')){
-   localStorage.setItem('threads', JSON.stringify([{id:'1',title:'ברוכים הבאים',description:'נושא היכרות',
-    createdBy:'1',createdAt:new Date().toISOString(),messageCount:1,
-    lastActivity:new Date().toISOString(),pinned:false,locked:false,
-    lastMessageId:'1',lastRead:{}}]));
-  }
-  if(!localStorage.getItem('messages')){
-   localStorage.setItem('messages', JSON.stringify([{id:'1',threadId:'1',userId:'1',userName:'מנהל ראשי',
-    userAvatar:'מ',content:'ברוכים הבאים! 🎉',isHtml:false,
-    timestamp:new Date().toISOString(),edited:false,reactions:{},views:['1'],poll:null,quotedMessage:null}]));
-  }
-  if(!localStorage.getItem('notifications')) localStorage.setItem('notifications','{}');
- }
-
- // Remove loader
+ if(!loaded){console.warn('Server unavailable, using local data');}
  loader.remove();
+ if(!localStorage.getItem('users')){
+  ss('users',[{id:'1',name:'מנהל ראשי',email:SUPER_EMAIL,password:SUPER_PW,
+   isAdmin:true,avatar:'מ',profileImage:null,status:'',deleted:false,
+   createdAt:new Date().toISOString(),perms:{}}]);
+ }
+ if(!localStorage.getItem('threads')){
+  ss('threads',[{id:'1',title:'ברוכים הבאים',description:'נושא היכרות',
+   createdBy:'1',createdAt:new Date().toISOString(),messageCount:1,
+   lastActivity:new Date().toISOString(),pinned:false,locked:false,
+   lastMessageId:'1',lastRead:{}}]);
+ }
+ if(!localStorage.getItem('messages')){
+  ss('messages',[{id:'1',threadId:'1',userId:'1',userName:'מנהל ראשי',
+   userAvatar:'מ',content:'ברוכים הבאים! 🎉',isHtml:false,
+   timestamp:new Date().toISOString(),edited:false,reactions:{},views:['1'],poll:null,quotedMessage:null}]);
+ }
+ if(!localStorage.getItem('notifications')) ss('notifications',{});
 }
 
 function setupListeners(){
@@ -642,7 +634,13 @@ function showApp(){
  sessionStorage.setItem('sa','1');
  $('unm').textContent=CU.name; $('ust').textContent=CU.status||'ערוך פרופיל';
  renderUAv();
+ // Show new thread button only if has permission
  if(can('canCreateThread')||isAdmin()) $('ntbtn').classList.remove('hidden');
+ else $('ntbtn').classList.add('hidden');
+ if(!isAdmin()) {
+  $('contactAdminBtn').style.display='flex';
+ }
+ if(isSuper()) ensureAdminInbox();
  if(isAdmin()){const ab=$('adminBtn');ab.style.display='flex';}
  if(can('canHtml')) $('htgl').classList.remove('hidden');
  $('nbell').style.display='block';
@@ -735,6 +733,7 @@ function renderThreads(filter){
  const c=$('tlist'); c.innerHTML='';
  const q=(filter||'').toLowerCase();
  threads.forEach(t=>{
+  if(!threadVisibleToUser(t))return; // hidden thread check
   if(q&&!t.title.toLowerCase().includes(q))return;
   const el=document.createElement('div');
   el.className='ti'+(t.pinned?' pinned':'')+(t.locked?' locked':'')+(CT&&CT.id===t.id?' active':'');
@@ -764,9 +763,11 @@ function selectThread(t){
  $('ctitle').textContent=t.title; $('cdesc').textContent=t.description||'';
  // header actions
  const hb=$('hbtns'); hb.innerHTML='';
- if(can('canPin'))hb.innerHTML+=`<button class="hbtn" onclick="adPin('${t.id}')">${t.pinned?'📌 בטל':'📌 הצמד'}</button>`;
- if(can('canLock'))hb.innerHTML+=`<button class="hbtn" onclick="adLock('${t.id}')">${t.locked?'🔓 פתח':'🔒 נעל'}</button>`;
- if(isAdmin())hb.innerHTML+=`<button class="hbtn dn" onclick="adDelThread('${t.id}')">🗑️ מחק</button>`;
+ if(can('canPin')) hb.innerHTML+=`<button class="hbtn" onclick="adPin('${t.id}')">${t.pinned?'📌 בטל':'📌 הצמד'}</button>`;
+ if(can('canLock')) hb.innerHTML+=`<button class="hbtn" onclick="adLock('${t.id}')">${t.locked?'🔓 פתח':'🔒 נעל'}</button>`;
+ if(isAdmin()) hb.innerHTML+=`<button class="hbtn dn" onclick="adDelThread('${t.id}')">🗑️ מחק</button>`;
+ if(isAdmin()) hb.innerHTML+=`<button class="hbtn" onclick="adToggleHide('${t.id}')">${t.hidden?'👁 הצג':'🙈 הסתר'}</button>`;
+ if(isAdmin()) hb.innerHTML+=`<button class="hbtn" onclick="adManageAccess('${t.id}')">🔑 גישה</button>`;
  // input visibility
  const blk=blockedIn(t.id);
  if((t.locked&&!can('canLock'))||blk){
@@ -829,7 +830,7 @@ function buildMsg(msg,showH){
  }
  const avH=ud&&ud.profileImage?`<img src="${ud.profileImage}" alt="">`:(ud?ud.avatar:msg.userAvatar||'?');
  const w=document.createElement('div');
- w.className='mrow'+(isOwn?' own':''); w.dataset.mid=msg.id;
+ w.className='mrow'+(isOwn?' own':' other'); w.dataset.mid=msg.id;
  if(msg.deleted){
   w.innerHTML=`<div class="mavc">${showH?`<div class="av" onclick="showPtip('${msg.userId}',this)">${avH}</div>`:'<div style="width:42px"></div>'}</div>
    <div class="mbody">${showH?`<div class="mhdr"><span class="mnm">${msg.userName}</span><span class="mtime">${fmtTime(msg.timestamp)}</span></div>`:''}
@@ -839,17 +840,18 @@ function buildMsg(msg,showH){
  let content='';
  if(msg.quotedMessage)content+=renderQuote(msg.quotedMessage);
  content+=fmtContent(msg.content,msg.isHtml);
- if(msg.poll)content+=renderPoll(msg.poll,msg.id);
+
  const timeStr=fmtTime(msg.timestamp), views=msg.views.length;
  // Can delete? not super's messages unless you are super
- const canDel=(isAdmin()||can('canDelete'))&&!(isAdmin()&&!isSuper()&&isSuper(ud));
+ // Can delete: must have permission AND cannot delete super's messages unless you are super
+ const canDel=(isSuper()||(can('canDelete')&&!isSuper(ud)));
  // Floating actions (no layout shift - absolutely positioned)
  const float=`<div class="mfloat">
   <button class="fab" data-react="1" onclick="openRP(event,'${msg.id}')" title="תגובה">😊</button>
   <button class="fab" onclick="startQ('${msg.id}')" title="צטט">💬</button>
   ${!showH?`<span style="font-size:10px;color:var(--t3);padding:2px 5px;">${timeStr} · 👁${views}</span>`:''}
   ${isOwn?`<button class="fab" onclick="editMsg('${msg.id}')" title="ערוך">✏️</button>`:''}
-  ${canDel?`<button class="fab" onclick="delMsg('${msg.id}')" title="מחק">🗑️</button>`:''}
+  ${canDel&&(isSuper()||!isSuper(ud))?`<button class="fab" onclick="delMsg('${msg.id}')" title="מחק">🗑️</button>`:''}
  </div>`;
  w.innerHTML=`${float}
   <div class="mavc">${showH?`<div class="av" onclick="showPtip('${msg.userId}',this)">${avH}</div>`:'<div style="width:42px"></div>'}</div>
@@ -862,6 +864,7 @@ function buildMsg(msg,showH){
  setTimeout(()=>{w.querySelectorAll('.mimg').forEach(img=>img.addEventListener('click',()=>openLB(img.src)));},0);
  return w;
 }
+
 function renderQuote(q){
  const clean=(q.content||'').replace(/<[^>]*>/g,'').replace(/\[סקר:[\s\S]*?\]/g,'[סקר]').substring(0,80);
  return`<div class="qblk"><div class="qa">${q.userName}</div><div>${clean}</div></div>`;
@@ -885,7 +888,8 @@ function fmtContent(c,isHtml){
 }
 function renderReacts(msg){
  if(!msg.reactions||!Object.keys(msg.reactions).length)return'';
- let h='<div class="reacts">';
+ const isOwn=msg.userId===CU.id;
+ let h=`<div class="reacts" style="justify-content:${isOwn?'flex-end':'flex-start'}">`;
  for(const[emoji,uids]of Object.entries(msg.reactions)){
   if(!uids.length)continue;
   const mine=uids.includes(CU.id);
@@ -897,18 +901,24 @@ function renderReacts(msg){
 // ═══ SEND ═══
 function sendMsg(){
  const inp=$('minput'), raw=inp.value.trim();
- if(!raw||!CT)return;
+ if((!raw&&!pendingImg)||!CT)return;
  if(CT.locked&&!can('canLock'))return;
  if(blockedIn(CT.id)){alert('אינך מורשה לכתוב בנושא זה');return;}
  if(OFFENSIVE.some(w=>raw.toLowerCase().includes(w.toLowerCase()))){alert('תוכן לא מתאים');return;}
- let poll=null;
- const pm=raw.match(/\[סקר:([\s\S]*?)\]/);
- if(pm){try{poll=JSON.parse(pm[1]);}catch(e){}}
+ const poll=null; // poll removed
  const isHtml=inputMode==='html'&&can('canHtml');
+ // If there's a pending image, build content with it
+ let finalContent = raw;
+ if(pendingImg) {
+  const imgMd = `![תמונה](${pendingImg})`;
+  finalContent = raw ? raw + '\n' + imgMd : imgMd;
+ }
+ if(!finalContent.trim()) return;
  const msg={id:Date.now().toString(),threadId:CT.id,userId:CU.id,
-  userName:CU.name,userAvatar:CU.avatar,content:raw,isHtml,
+  userName:CU.name,userAvatar:CU.avatar,content:finalContent,isHtml,
   timestamp:new Date().toISOString(),edited:false,reactions:{},
-  quotedMessage:quotedMsg?{...quotedMsg}:null,poll,views:[CU.id]};
+  quotedMessage:quotedMsg?{...quotedMsg}:null,
+  poll:null,views:[CU.id]};
  const all=ls('messages'); all.push(msg); ss('messages',all);
  const ts=ls('threads'),ti=ts.findIndex(t=>t.id===CT.id);
  if(ti!==-1){ts[ti].messageCount=(ts[ti].messageCount||0)+1;ts[ti].lastActivity=msg.timestamp;ts[ti].lastMessageId=msg.id;if(!ts[ti].lastRead)ts[ti].lastRead={};ts[ti].lastRead[CU.id]=msg.id;ss('threads',ts);}
@@ -994,14 +1004,14 @@ function handleImgSelect(e){
  if(!f.type.startsWith('image/')){alert('רק קבצי תמונה');return;}
  const r=new FileReader();
  r.onload=ev=>{
-  pendingImg=ev.target.result;
+  pendingImg=ev.target.result; // store separately, NOT in textarea
   const bar=$('iprev'); bar.classList.remove('hidden');
-  bar.innerHTML=`<img src="${ev.target.result}" alt="">
-   <span class="iprevn">${f.name}</span>
+  bar.innerHTML=`
+   <img src="${ev.target.result}" alt="" style="width:60px;height:60px;object-fit:cover;border-radius:8px;flex-shrink:0;">
+   <span class="iprevn">📷 ${f.name}</span>
    <button class="iprevrm" onclick="clearImgPrev()">×</button>`;
-  const inp=$('minput');
-  inp.value+=(inp.value?'\n':'')+`![תמונה](${ev.target.result})`;
-  onInput();
+  // Enable send button even if textarea is empty
+  $('sbtn').disabled=false;
  };
  r.readAsDataURL(f); e.target.value='';
 }
@@ -1018,8 +1028,8 @@ function setMode(mode){
 }
 function buildToolbar(){
  const tb=$('tbar');
- const showPoll=isAdmin()||can('canPoll');
- const showImg=isAdmin()||can('canSendImages');
+ const showPoll=false;
+ const showImg=true; // כל משתמש יכול לשלוח תמונות
  tb.innerHTML=`
   <button class="tbtn" data-f="bold"><strong>B</strong></button>
   <button class="tbtn" data-f="italic"><em>I</em></button>
@@ -1029,13 +1039,12 @@ function buildToolbar(){
   <button class="tbtn" data-f="code">&lt;/&gt;</button>
   <button class="tbtn" data-f="link">🔗</button>
   <button class="tbtn" data-f="emoji">😊</button>
-  ${showImg?`<button class="tbtn" onclick="$('imgUpload').click()">📷</button>`:''}
-  ${showPoll?`<button class="tbtn" data-f="poll">📊 סקר</button>`:''}`;
+  ${showImg?`<button class="tbtn" onclick="$('imgUpload').click()">📷</button>`:''}`;
  tb.querySelectorAll('[data-f]').forEach(b=>b.addEventListener('click',()=>doFmt(b.dataset.f)));
 }
 function doFmt(f){
  const inp=$('minput');
- if(f==='poll'){openM('pollModal');return;}
+ if(f==='poll'){return;} // poll removed
  if(f==='emoji'){const ems=['😊','😂','😍','🤔','👍','🔥','🎉','💯','❤️','😎'];const p=prompt('בחר: '+ems.join(' '));if(p&&ems.includes(p))insAt(inp,p);return;}
  if(f==='link'){const url=prompt('קישור:');if(!url)return;const txt=prompt('טקסט:')||url;insAt(inp,`[${txt}](${url})`);return;}
  const s=inp.selectionStart,e=inp.selectionEnd,sel=inp.value.substring(s,e);
@@ -1047,7 +1056,17 @@ function doFmt(f){
 function insAt(inp,txt){const s=inp.selectionStart;inp.value=inp.value.substring(0,s)+txt+inp.value.substring(s);inp.setSelectionRange(s+txt.length,s+txt.length);inp.focus();onInput();}
 
 // ═══ REACTIONS ═══
-function openRP(e,mid){e.stopPropagation();const rp=$('rp');rp.dataset.mid=mid;rp.classList.add('open');rp.style.top=(e.pageY-65)+'px';rp.style.left=e.pageX+'px';}
+function openRP(e,mid){
+ e.stopPropagation();
+ const rp=$('rp'); rp.dataset.mid=mid; rp.classList.add('open');
+ // Measure picker size (192px wide, ~80px tall)
+ const pw=200, ph=90;
+ let x=e.clientX, y=e.clientY-ph-10;
+ if(x+pw>window.innerWidth-10) x=window.innerWidth-pw-10;
+ if(x<4) x=4;
+ if(y<4) y=e.clientY+20;
+ rp.style.left=x+'px'; rp.style.top=y+'px'; rp.style.right='auto';
+}
 function toggleReact(mid,emoji){
  const all=ls('messages'),i=all.findIndex(m=>m.id===mid); if(i===-1)return;
  const msg=all[i]; if(!msg.reactions)msg.reactions={};
@@ -1193,10 +1212,12 @@ function renderAThreads(){
  const ts=ls('threads'),c=$('atList'); c.innerHTML='';
  ts.forEach(t=>{
   const d=document.createElement('div'); d.className='arow';
-  d.innerHTML=`<div class="ari"><strong>${t.title}</strong><small>${t.description||''} · ${t.messageCount||0} הודעות</small></div>
+  d.innerHTML=`<div class="ari"><strong>${t.title}${t.hidden?' 🙈':''}</strong><small>${t.description||''} · ${t.messageCount||0} הודעות ${t.hidden?'· מוסתר':''}</small></div>
    <div class="abtns">
     <button class="mbtn g" onclick="adPin('${t.id}')">${t.pinned?'📌 בטל':'📌'}</button>
     <button class="mbtn g" onclick="adLock('${t.id}')">${t.locked?'🔓':'🔒'}</button>
+    <button class="mbtn g" onclick="adToggleHide('${t.id}')">${t.hidden?'👁 הצג':'🙈 הסתר'}</button>
+    <button class="mbtn g" onclick="adManageAccess('${t.id}')">🔑 גישה</button>
     <button class="mbtn d" onclick="adDelThread('${t.id}')">מחק</button>
    </div>`;
   c.appendChild(d);
@@ -1394,6 +1415,118 @@ function adRenameDirect(uid,name){
 }
 function exportData(){const data={users:ls('users'),threads:ls('threads'),messages:ls('messages')};const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=`forum-${new Date().toISOString().split('T')[0]}.json`;a.click();URL.revokeObjectURL(url);}
 function resetAll(){if(confirm('⚠️ מחיקת כל הנתונים?'))if(confirm('בטוח?')){localStorage.clear();location.reload();}}
+
+
+// ═══ THREAD ACCESS / HIDDEN THREADS ═══
+let currentAccessThreadId = null;
+
+function threadVisibleToUser(t) {
+ if(!t.hidden) return true;           // not hidden → visible to all
+ if(isSuper()) return true;           // super always sees
+ if(isAdmin()) return true;           // admins see hidden threads
+ const access = t.allowedUsers || [];
+ return access.includes(CU.id);
+}
+
+function adToggleHide(tid) {
+ const ts=ls('threads'), i=ts.findIndex(t=>t.id===tid); if(i===-1)return;
+ ts[i].hidden=!ts[i].hidden; ss('threads',ts);
+ loadThreads(); renderAThreads();
+ // If current thread just got hidden and user has no access, clear
+ if(CT&&CT.id===tid&&!threadVisibleToUser(ts[i])){
+  CT=null; $('chdr').classList.add('hidden'); $('iarea').classList.add('hidden');
+  $('msgs').innerHTML='<div class="empty"><div class="ei">💬</div><h3>ברוכים הבאים</h3></div>';
+ }
+}
+
+function adManageAccess(tid) {
+ currentAccessThreadId = tid;
+ const t = ls('threads').find(x=>x.id===tid); if(!t)return;
+ $('accessModalTitle').textContent = 'גישה לנושא: ' + t.title;
+ // Populate user select
+ const sel = $('accessUserSel'); sel.innerHTML = '<option value="">-- בחר משתמש --</option>';
+ const allowed = t.allowedUsers || [];
+ ls('users').filter(u=>!u.deleted&&!isSuper(u)&&!u.isAdmin&&!allowed.includes(u.id)).forEach(u=>{
+  const o=document.createElement('option'); o.value=u.id; o.textContent=u.name; sel.appendChild(o);
+ });
+ renderAccessList(t);
+ openM('accessModal');
+}
+
+function renderAccessList(t) {
+ const c=$('accessList'); c.innerHTML='';
+ const allowed = t.allowedUsers || [];
+ if(!allowed.length){c.innerHTML='<p style="font-size:13px;color:var(--t3);padding:8px 0;">אין משתמשים עם גישה מיוחדת</p>';return;}
+ allowed.forEach(uid=>{
+  const u=getUser(uid); if(!u)return;
+  const d=document.createElement('div'); d.className='arow';
+  d.innerHTML=`<div class="ari"><strong>${u.name}</strong><small>${u.email}</small></div>
+   <button class="mbtn d" style="padding:5px 10px;font-size:12px;" onclick="revokeAccess('${uid}')">הסר גישה</button>`;
+  c.appendChild(d);
+ });
+}
+
+function grantAccess() {
+ const uid=$('accessUserSel').value; if(!uid)return;
+ const ts=ls('threads'), i=ts.findIndex(t=>t.id===currentAccessThreadId); if(i===-1)return;
+ if(!ts[i].allowedUsers) ts[i].allowedUsers=[];
+ if(!ts[i].allowedUsers.includes(uid)) ts[i].allowedUsers.push(uid);
+ ss('threads',ts);
+ adManageAccess(currentAccessThreadId);
+}
+
+function revokeAccess(uid) {
+ const ts=ls('threads'), i=ts.findIndex(t=>t.id===currentAccessThreadId); if(i===-1)return;
+ ts[i].allowedUsers=(ts[i].allowedUsers||[]).filter(x=>x!==uid);
+ ss('threads',ts);
+ adManageAccess(currentAccessThreadId);
+}
+
+// Thread system removed
+
+// ═══ CONTACT ADMIN ═══
+function showContactAdmin() {
+ $('contactAdminTxt').value='';
+ openM('contactAdminModal');
+}
+
+function sendContactAdmin() {
+ const text=$('contactAdminTxt').value.trim();
+ if(!text){alert('כתוב הודעה');return;}
+ // Send as DM notification to super admin
+ addNotif(getSuperUid(),{
+  type:'dm', from:CU.name,
+  text:text.substring(0,200), threadId:null
+ });
+ // Also save to a special "admin messages" thread if exists
+ const ts=ls('threads');
+ let adminThread=ts.find(t=>t.isAdminInbox);
+ if(adminThread){
+  const msg={id:Date.now().toString(),threadId:adminThread.id,
+   userId:CU.id,userName:CU.name,userAvatar:CU.avatar,
+   content:`📩 **הודעה מ-${CU.name}:**\n${text}`,isHtml:false,
+   timestamp:new Date().toISOString(),edited:false,reactions:{},views:[CU.id],poll:null,quotedMessage:null};
+  const all=ls('messages'); all.push(msg); ss('messages',all);
+  const i=ts.findIndex(t=>t.id===adminThread.id);
+  if(i!==-1){ts[i].messageCount=(ts[i].messageCount||0)+1;ts[i].lastActivity=msg.timestamp;ts[i].lastMessageId=msg.id;ss('threads',ts);}
+ }
+ alert('ההודעה נשלחה למנהל!');
+ closeM('contactAdminModal');
+}
+
+// Show/init admin inbox thread (super admin only)
+function ensureAdminInbox() {
+ if(!isSuper()) return;
+ const ts=ls('threads');
+ if(!ts.find(t=>t.isAdminInbox)){
+  const t={id:'admin-inbox',title:'📩 תיבת הודעות מנהל',description:'הודעות שנשלחו מהמשתמשים',
+   createdBy:CU.id,createdAt:new Date().toISOString(),messageCount:0,
+   lastActivity:new Date().toISOString(),pinned:true,locked:true,hidden:true,
+   isAdminInbox:true,lastMessageId:null,lastRead:{},
+   allowedUsers:[]};
+  ts.unshift(t); ss('threads',ts);
+ }
+}
 
 // ═══ LIGHTBOX, SCROLL, MODAL ═══
 function openLB(src){$('lbImg').src=src;$('lb').classList.add('open');}
